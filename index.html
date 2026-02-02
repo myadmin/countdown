@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>春节倒计时 - Spring Festival Countdown</title>
+  <script type="module" crossorigin>
+!function(){const t=document.createElement("link").relList;if(!(t&&t.supports&&t.supports("modulepreload"))){for(const t of document.querySelectorAll('link[rel="modulepreload"]'))e(t);new MutationObserver(t=>{for(const i of t)if("childList"===i.type)for(const t of i.addedNodes)"LINK"===t.tagName&&"modulepreload"===t.rel&&e(t)}).observe(document,{childList:!0,subtree:!0})}function e(t){if(t.ep)return;t.ep=!0;const e=function(t){const e={};return t.integrity&&(e.integrity=t.integrity),t.referrerPolicy&&(e.referrerPolicy=t.referrerPolicy),"use-credentials"===t.crossOrigin?e.credentials="include":"anonymous"===t.crossOrigin?e.credentials="omit":e.credentials="same-origin",e}(t);fetch(t.href,e)}}(),function(){const t=document.getElementById("fireworks"),e=t.getContext("2d");let i=t.width=window.innerWidth,n=t.height=window.innerHeight;window.addEventListener("resize",()=>{i=t.width=window.innerWidth,n=t.height=window.innerHeight});let s=[],o=[];const r=["#FF5252","#FFD700","#FF9800","#FFEB3B","#FFFFFF","#FF4081","#00BCD4","#69F0AE"];function a(t,e){return Math.random()*(e-t)+t}class l{constructor(){this.x=a(.1*i,.9*i),this.y=n,this.speed=a(8,15),this.color=r[Math.floor(Math.random()*r.length)],this.exploded=!1,this.trail=[]}update(){return this.y-=this.speed,this.speed*=.98,this.trail.push({x:this.x,y:this.y,alpha:1}),this.trail.length>20&&this.trail.shift(),this.trail.forEach(t=>{t.alpha-=.05}),!(this.speed<2||this.y<.3*n)||(this.explode(),!1)}draw(){this.trail.forEach(t=>{e.beginPath(),e.arc(t.x,t.y,2,0,2*Math.PI),e.fillStyle=`rgba(255, 215, 0, ${t.alpha})`,e.fill()}),e.beginPath(),e.arc(this.x,this.y,4,0,2*Math.PI),e.fillStyle=this.color,e.fill()}explode(){this.exploded=!0;for(let t=0;t<80;t++)s.push(new d(this.x,this.y,this.color))}}class d{constructor(t,e,i){this.x=t,this.y=e,this.color=i;const n=a(0,2*Math.PI),s=a(2,10);this.vx=Math.cos(n)*s,this.vy=Math.sin(n)*s,this.gravity=.1,this.friction=.96,this.alpha=1,this.decay=a(.01,.02),this.size=a(2,4)}update(){return this.vx*=this.friction,this.vy*=this.friction,this.vy+=this.gravity,this.x+=this.vx,this.y+=this.vy,this.alpha-=this.decay,this.alpha>0}draw(){if(e.beginPath(),e.arc(this.x,this.y,this.size,0,2*Math.PI),e.fillStyle=this.color.replace(")",`, ${this.alpha})`).replace("rgb","rgba"),this.color.startsWith("#")){const t=parseInt(this.color.slice(1,3),16),i=parseInt(this.color.slice(3,5),16),n=parseInt(this.color.slice(5,7),16);e.fillStyle=`rgba(${t}, ${i}, ${n}, ${this.alpha})`}e.fill()}}function h(){o.push(new l)}function c(){for(let e=0;e<10;e++)setTimeout(()=>{o.push(new l)},200*e);let t=setInterval(()=>{Math.random()<.5&&h()},300);setTimeout(()=>{clearInterval(t)},3e4)}function u(){setTimeout(()=>{for(let t=0;t<3;t++)setTimeout(()=>h(),300*t)},500)}!function t(){e.fillStyle="rgba(0, 0, 0, 0.1)",e.fillRect(0,0,i,n),o=o.filter(t=>!t.exploded&&(t.draw(),t.update())),s=s.filter(t=>(t.draw(),t.update())),Math.random()<.03&&h(),requestAnimationFrame(t)}(),u(),window.fireworksModule={createFirework:h,triggerCelebration:c,stopFireworks:function(){o=[],s=[]},startNormalFireworks:u},window.triggerCelebration=c}();const t={2024:new Date(2024,1,10),2025:new Date(2025,0,29),2026:new Date(2026,1,17),2027:new Date(2027,1,6),2028:new Date(2028,1,26),2029:new Date(2029,1,13),2030:new Date(2030,2,3)},e=document.getElementById("days"),i=document.getElementById("hours"),n=document.getElementById("minutes"),s=document.getElementById("seconds"),o=document.getElementById("countdown"),r=document.getElementById("festivalDate"),a=document.getElementById("greetingSection");function l(){const e=new Date,i=e.getFullYear();if(t[i]&&t[i]>e)return{date:t[i],year:i};const n=i+1;return{date:t[n],year:n}}function d(t){const e=t-new Date;if(e<=0)return{days:0,hours:0,minutes:0,seconds:0,isToday:!0};return{days:Math.floor(e/864e5),hours:Math.floor(e%864e5/36e5),minutes:Math.floor(e%36e5/6e4),seconds:Math.floor(e%6e4/1e3),isToday:!1}}function h(t,e,i=""){const n=i+e.toString().padStart(2,"0");t.textContent!==n&&(t.classList.add("updating"),setTimeout(()=>{t.classList.remove("updating")},300),t.textContent=n)}function c(){const{date:t,year:c}=l(),u=d(t),f=t.getMonth()+1,y=t.getDate();var g;return r.textContent=`${c}年春节：${c}年${f}月${y}日`,h(e,u.days),h(i,u.hours),h(n,u.minutes),h(s,u.seconds),g=u.days,o.querySelectorAll(".countdown-item").forEach(t=>{g<=1?t.classList.add("urgent"):t.classList.remove("urgent")}),!!u.isToday&&(o.style.display="none",r.style.display="none",a.classList.remove("hidden"),o.classList.add("celebrate"),"function"==typeof triggerCelebration&&triggerCelebration(),!0)}document.addEventListener("DOMContentLoaded",function(){c()||setInterval(c,1e3)}),window.countdownModule={getNextSpringFestival:l,calculateCountdown:d,updateCountdown:c};
+
+</script>
+  <style>
+:root{--primary-red: #D32F2F;--dark-red: #B71C1C;--light-red: #FF5252;--gold: #FFD700;--dark-gold: #C9A227;--light-gold: #FFE082;--bg-dark: #1a0a0a;--bg-gradient-start: #2D0A0A;--bg-gradient-end: #0D0505;--text-white: #FFFFFF;--text-gold: #FFD700;--text-light-gold: #FFE082;--shadow-gold: 0 0 20px rgba(255, 215, 0, .5);--shadow-red: 0 0 20px rgba(211, 47, 47, .5);--font-primary: "Noto Sans SC", "Microsoft YaHei", sans-serif;--font-serif: "Noto Serif SC", serif;--transition-smooth: all .3s ease}*{margin:0;padding:0;box-sizing:border-box}html{font-size:16px;scroll-behavior:smooth}body{font-family:var(--font-primary);background:linear-gradient(135deg,var(--bg-gradient-start) 0%,var(--bg-gradient-end) 100%);min-height:100vh;color:var(--text-white);overflow-x:hidden;position:relative}.background-decoration{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:hidden}.lantern{position:absolute;width:60px;height:80px;background:linear-gradient(90deg,var(--primary-red),var(--light-red));border-radius:50% 50% 45% 45%;box-shadow:0 0 30px #d32f2f99;animation:lantern-sway 3s ease-in-out infinite}.lantern:before{content:"";position:absolute;top:-15px;left:50%;transform:translate(-50%);width:20px;height:15px;background:var(--gold);clip-path:polygon(50% 0%,0% 100%,100% 100%)}.lantern:after{content:"";position:absolute;bottom:-20px;left:50%;transform:translate(-50%);width:10px;height:25px;background:linear-gradient(to bottom,var(--gold),var(--dark-gold));border-radius:0 0 50% 50%}.left-lantern{top:20px;left:50px;animation-delay:0s}.right-lantern{top:20px;right:50px;animation-delay:1.5s}#fireworks{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10}.container{position:relative;z-index:15;max-width:900px;margin:0 auto;padding:40px 20px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center}.header{text-align:center;margin-bottom:60px}.title{display:flex;align-items:center;justify-content:center;gap:20px;font-family:var(--font-serif);font-size:3.5rem;font-weight:700;color:var(--gold);text-shadow:var(--shadow-gold);margin-bottom:10px;animation:title-glow 2s ease-in-out infinite alternate}.title-icon{font-size:2.5rem;animation:lantern-sway 2s ease-in-out infinite}.title-text{background:linear-gradient(135deg,var(--gold),var(--light-gold),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.subtitle{font-size:1.2rem;color:#fff9;letter-spacing:3px;text-transform:uppercase}.countdown-section{width:100%;text-align:center}.countdown-container{display:flex;justify-content:center;align-items:flex-start;gap:15px;flex-wrap:wrap;margin-bottom:30px}.countdown-item{display:flex;flex-direction:column;align-items:center;min-width:100px;padding:25px 20px;background:#ffd7001a;border:2px solid rgba(255,215,0,.3);border-radius:15px;backdrop-filter:blur(10px);transition:var(--transition-smooth)}.countdown-item:hover{transform:translateY(-5px);box-shadow:var(--shadow-gold);border-color:var(--gold)}.countdown-number{font-family:Courier New,monospace;font-size:4rem;font-weight:700;color:var(--gold);line-height:1;text-shadow:var(--shadow-gold);min-width:80px;transition:var(--transition-smooth)}.countdown-label{font-size:1.5rem;font-weight:600;color:var(--text-white);margin-top:10px}.countdown-en{font-size:.75rem;color:#ffffff80;text-transform:uppercase;letter-spacing:2px;margin-top:5px}.countdown-separator{font-size:3rem;font-weight:700;color:var(--gold);padding-top:15px;animation:separator-blink 1s ease-in-out infinite}.festival-date{font-size:1rem;color:#fff9;padding:10px 20px;background:#d32f2f33;border-radius:20px;display:inline-block}.greeting-section{text-align:center;padding:40px;animation:fadeInUp 1s ease-out}.greeting-section.hidden{display:none}.greeting-title{font-family:var(--font-serif);font-size:4rem;color:var(--gold);text-shadow:var(--shadow-gold);margin-bottom:20px;animation:celebrate-bounce .5s ease infinite alternate}.greeting-text{font-size:1.5rem;color:var(--text-white);line-height:1.8}.footer{margin-top:60px;text-align:center}.footer-decoration{display:flex;justify-content:center;gap:30px;font-size:2rem;animation:footer-wave 2s ease-in-out infinite}.decoration-item{animation:item-bounce 1s ease-in-out infinite}.decoration-item:nth-child(2),.decoration-item:nth-child(4){animation-delay:.2s}@media (max-width: 768px){.title{font-size:2.5rem;gap:10px}.title-icon{font-size:1.8rem}.subtitle{font-size:1rem}.countdown-container{gap:10px}.countdown-item{min-width:70px;padding:15px 10px}.countdown-number{font-size:2.5rem;min-width:50px}.countdown-label{font-size:1.2rem}.countdown-en{font-size:.6rem}.countdown-separator{font-size:2rem;padding-top:10px}.lantern{width:40px;height:55px}.left-lantern{left:20px}.right-lantern{right:20px}}@media (max-width: 480px){.container{padding:30px 15px}.header{margin-bottom:40px}.title{font-size:2rem;flex-direction:column;gap:5px}.title-icon{display:none}.subtitle{font-size:.9rem;letter-spacing:2px}.countdown-container{gap:8px}.countdown-item{min-width:60px;padding:12px 8px;border-width:1px}.countdown-number{font-size:2rem;min-width:40px}.countdown-label{font-size:1rem}.countdown-en{display:none}.countdown-separator{font-size:1.5rem;padding-top:8px}.festival-date{font-size:.85rem;padding:8px 15px}.greeting-title{font-size:2.5rem}.greeting-text{font-size:1.2rem}.footer-decoration{gap:20px;font-size:1.5rem}.lantern{display:none}}@media (max-width: 360px){.title{font-size:1.8rem}.countdown-item{min-width:50px;padding:10px 5px}.countdown-number{font-size:1.6rem;min-width:35px}.countdown-label{font-size:.9rem}}@media (max-height: 500px) and (orientation: landscape){.container{padding:20px}.header{margin-bottom:20px}.title{font-size:1.8rem}.countdown-container{gap:10px}.countdown-item{min-width:60px;padding:10px 15px}.countdown-number{font-size:2rem}.countdown-label{font-size:.9rem}.footer{margin-top:20px}}@media print{.lantern,#fireworks,.footer-decoration{display:none}body{background:#fff;color:#000}.countdown-item{background:none;border:1px solid #ccc}.countdown-number{color:#000;text-shadow:none}}@keyframes lantern-sway{0%,to{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}@keyframes title-glow{0%{text-shadow:0 0 20px rgba(255,215,0,.5),0 0 40px rgba(255,215,0,.3)}to{text-shadow:0 0 30px rgba(255,215,0,.8),0 0 60px rgba(255,215,0,.5),0 0 80px rgba(255,215,0,.3)}}@keyframes separator-blink{0%,to{opacity:1}50%{opacity:.3}}@keyframes number-change{0%{transform:scale(1)}50%{transform:scale(1.1)}to{transform:scale(1)}}.countdown-number.updating{animation:number-change .3s ease}@keyframes celebrate-bounce{0%{transform:scale(1)}to{transform:scale(1.05)}}@keyframes fadeInUp{0%{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}@keyframes footer-wave{0%,to{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes item-bounce{0%,to{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes star-twinkle{0%,to{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}@keyframes gradient-flow{0%{background-position:0% 50%}50%{background-position:100% 50%}to{background-position:0% 50%}}@keyframes pulse{0%{box-shadow:0 0 #ffd70066}70%{box-shadow:0 0 0 15px #ffd70000}to{box-shadow:0 0 #ffd70000}}.countdown-item:hover{animation:pulse 1.5s infinite}@keyframes rotate{0%{transform:rotate(0)}to{transform:rotate(360deg)}}@keyframes zoomIn{0%{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}@keyframes snowfall{0%{transform:translateY(-10px) rotate(0);opacity:1}to{transform:translateY(100vh) rotate(360deg);opacity:0}}@keyframes confetti-fall{0%{transform:translateY(-100%) rotate(0);opacity:1}to{transform:translateY(100vh) rotate(720deg);opacity:0}}@keyframes flash{0%,50%,to{opacity:1}25%,75%{opacity:.5}}@keyframes breathe{0%,to{transform:scale(1)}50%{transform:scale(1.02)}}@keyframes shake{0%,to{transform:translate(0)}10%,30%,50%,70%,90%{transform:translate(-5px)}20%,40%,60%,80%{transform:translate(5px)}}.shake{animation:shake .5s ease-in-out}.breathe{animation:breathe 2s ease-in-out infinite}.countdown-item.urgent{border-color:#ff5252;box-shadow:0 0 20px #ff525280;animation:urgent-pulse 1s ease-in-out infinite}@keyframes urgent-pulse{0%,to{box-shadow:0 0 20px #ff525280}50%{box-shadow:0 0 40px #ff5252cc}}.countdown-container.celebrate{animation:celebrate-flash .5s ease-in-out 3}@keyframes celebrate-flash{0%,to{filter:brightness(1)}50%{filter:brightness(2)}}@keyframes loading{0%{opacity:0}to{opacity:1}}@keyframes typewriter{0%{width:0}to{width:100%}}@keyframes slideInLeft{0%{opacity:0;transform:translate(-50px)}to{opacity:1;transform:translate(0)}}@keyframes slideInRight{0%{opacity:0;transform:translate(50px)}to{opacity:1;transform:translate(0)}}.slide-in-left{animation:slideInLeft .5s ease-out}.slide-in-right{animation:slideInRight .5s ease-out}.countdown-item:hover .countdown-number{transform:scale(1.1)}.title:hover{animation:title-glow .5s ease-out forwards}a:hover{color:var(--light-gold);text-decoration:none}button:hover{transform:translateY(-2px);box-shadow:var(--shadow-gold)}input:focus{outline:none;border-color:var(--gold);box-shadow:var(--shadow-gold)}
+
+</style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="background-decoration">
+        <div class="lantern left-lantern"></div>
+        <div class="lantern right-lantern"></div>
+    </div>
+
+    <!-- 烟花 Canvas -->
+    <canvas id="fireworks"></canvas>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 标题区域 -->
+        <header class="header">
+            <h1 class="title">
+                <span class="title-icon">🏮</span>
+                <span class="title-text">春节倒计时</span>
+                <span class="title-icon">🏮</span>
+            </h1>
+            <p class="subtitle">Spring Festival Countdown</p>
+        </header>
+
+        <!-- 倒计时显示区域 -->
+        <main class="countdown-section">
+            <div class="countdown-container" id="countdown">
+                <!-- 天 -->
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">00</div>
+                    <div class="countdown-label">天</div>
+                    <div class="countdown-en">DAYS</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <!-- 时 -->
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">00</div>
+                    <div class="countdown-label">时</div>
+                    <div class="countdown-en">HOURS</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <!-- 分 -->
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">00</div>
+                    <div class="countdown-label">分</div>
+                    <div class="countdown-en">MINUTES</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <!-- 秒 -->
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">00</div>
+                    <div class="countdown-label">秒</div>
+                    <div class="countdown-en">SECONDS</div>
+                </div>
+            </div>
+
+            <!-- 春节日期提示 -->
+            <div class="festival-date" id="festivalDate">
+                2026年春节：2026年2月17日
+            </div>
+        </main>
+
+        <!-- 新年祝福（春节当天显示） -->
+        <div class="greeting-section hidden" id="greetingSection">
+            <h2 class="greeting-title">🎉 新年快乐！🎉</h2>
+            <p class="greeting-text">祝您在新的一年里，阖家幸福，万事如意！</p>
+        </div>
+
+        <!-- 底部装饰 -->
+        <footer class="footer">
+            <div class="footer-decoration">
+                <span class="decoration-item">🧧</span>
+                <span class="decoration-item">福</span>
+                <span class="decoration-item">🧧</span>
+                <span class="decoration-item">福</span>
+                <span class="decoration-item">🧧</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+</body>
+</html>
